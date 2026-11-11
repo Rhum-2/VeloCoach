@@ -8,6 +8,8 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -62,12 +64,59 @@ interface PlanDao {
     suspend fun deleteForDay(epochDay: Long)
 }
 
+@Dao
+interface AthleteProfileDao {
+
+    @Query("SELECT * FROM athlete_profile WHERE id = 1")
+    fun observe(): Flow<AthleteProfileEntity?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(profile: AthleteProfileEntity)
+}
+
+@Dao
+interface RideDao {
+
+    @Query("SELECT * FROM rides ORDER BY startedAt DESC")
+    fun observeAll(): Flow<List<RideEntity>>
+
+    @Insert
+    suspend fun insert(ride: RideEntity): Long
+}
+
+val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS athlete_profile " +
+                "(id INTEGER NOT NULL, ftpWatts INTEGER NOT NULL, PRIMARY KEY(id))"
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS rides (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "startedAt INTEGER NOT NULL, " +
+                "durationSeconds INTEGER NOT NULL, " +
+                "distanceMeters REAL NOT NULL, " +
+                "avgSpeedKmh REAL NOT NULL, " +
+                "maxSpeedKmh REAL NOT NULL, " +
+                "pointsJson TEXT NOT NULL)"
+        )
+    }
+}
+
 @Database(
-    entities = [WorkoutEntity::class, WorkoutBlockEntity::class, PlanEntryEntity::class],
-    version = 1,
+    entities = [
+        WorkoutEntity::class,
+        WorkoutBlockEntity::class,
+        PlanEntryEntity::class,
+        AthleteProfileEntity::class,
+        RideEntity::class
+    ],
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun workoutDao(): WorkoutDao
     abstract fun planDao(): PlanDao
+    abstract fun athleteProfileDao(): AthleteProfileDao
+    abstract fun rideDao(): RideDao
 }

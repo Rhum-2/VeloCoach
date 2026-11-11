@@ -62,6 +62,7 @@ fun WorkoutDetailScreen(
     }
 ) {
     val workout by viewModel.workout.collectAsStateWithLifecycle()
+    val ftp by viewModel.ftp.collectAsStateWithLifecycle()
     var confirmDelete by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -166,7 +167,7 @@ fun WorkoutDetailScreen(
                             Column {
                                 Text(labelFor(block.type), style = MaterialTheme.typography.titleSmall)
                                 Text(
-                                    text = blockDescription(block),
+                                    text = blockDescription(block, ftp),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -210,12 +211,13 @@ private fun StatCard(label: String, value: String, modifier: Modifier = Modifier
     }
 }
 
-private fun blockDescription(block: WorkoutBlockEntity): String {
+private fun blockDescription(block: WorkoutBlockEntity, ftp: Int): String {
     val power = WorkoutMath.formatPowerRange(block.powerLow, block.powerHigh)
+    val watts = if (ftp > 0) " · ${block.powerLow * ftp / 100}–${block.powerHigh * ftp / 100} W" else ""
     return if (block.type == BlockType.INTERVAL) {
         val recovery = if (block.recoverySeconds > 0) " · récup ${block.recoverySeconds} s" else ""
-        "${block.repetitions} × ${block.durationSeconds} s @ $power$recovery"
+        "${block.repetitions} × ${block.durationSeconds} s @ $power$watts$recovery"
     } else {
-        "${WorkoutMath.formatDuration(block.durationSeconds)} @ $power"
+        "${WorkoutMath.formatDuration(block.durationSeconds)} @ $power$watts"
     }
 }

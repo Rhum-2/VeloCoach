@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.velocoach.app.data.AppDatabase
 import com.velocoach.app.data.BlockType
+import com.velocoach.app.data.MIGRATION_1_2
 import com.velocoach.app.data.WorkoutBlockEntity
 import com.velocoach.app.data.WorkoutEntity
 import com.velocoach.app.data.WorkoutRepository
@@ -16,11 +17,17 @@ class VeloCoachApp : Application() {
 
     val database: AppDatabase by lazy {
         Room.databaseBuilder(this, AppDatabase::class.java, "velocoach.db")
+            .addMigrations(MIGRATION_1_2)
             .build()
     }
 
     val repository: WorkoutRepository by lazy {
-        WorkoutRepository(database.workoutDao(), database.planDao())
+        WorkoutRepository(
+            database.workoutDao(),
+            database.planDao(),
+            database.athleteProfileDao(),
+            database.rideDao()
+        )
     }
 
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)

@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.DirectionsBike
 import androidx.compose.material.icons.outlined.FitnessCenter
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -28,6 +30,8 @@ import com.velocoach.app.ui.editor.WorkoutEditorScreen
 import com.velocoach.app.ui.library.LibraryScreen
 import com.velocoach.app.ui.navigation.Routes
 import com.velocoach.app.ui.plan.PlanScreen
+import com.velocoach.app.ui.profile.ProfileScreen
+import com.velocoach.app.ui.ride.RideScreen
 import com.velocoach.app.ui.theme.VeloCoachTheme
 
 class MainActivity : ComponentActivity() {
@@ -46,7 +50,12 @@ fun VeloCoachRoot() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
-    val showBottomBar = currentRoute == Routes.PLAN || currentRoute == Routes.LIBRARY
+    val showBottomBar = currentRoute in listOf(
+        Routes.PLAN,
+        Routes.LIBRARY,
+        Routes.RIDE,
+        Routes.PROFILE
+    )
 
     Scaffold(
         bottomBar = {
@@ -63,6 +72,18 @@ fun VeloCoachRoot() {
                         onClick = { navigateTopLevel(navController, Routes.LIBRARY) },
                         icon = { Icon(Icons.Outlined.FitnessCenter, contentDescription = null) },
                         label = { Text("Séances") }
+                    )
+                    NavigationBarItem(
+                        selected = currentRoute == Routes.RIDE,
+                        onClick = { navigateTopLevel(navController, Routes.RIDE) },
+                        icon = { Icon(Icons.Outlined.DirectionsBike, contentDescription = null) },
+                        label = { Text("Sortie") }
+                    )
+                    NavigationBarItem(
+                        selected = currentRoute == Routes.PROFILE,
+                        onClick = { navigateTopLevel(navController, Routes.PROFILE) },
+                        icon = { Icon(Icons.Outlined.Person, contentDescription = null) },
+                        label = { Text("Profil") }
                     )
                 }
             }
@@ -84,6 +105,12 @@ fun VeloCoachRoot() {
                     onOpenWorkout = { workoutId -> navController.navigate(Routes.detail(workoutId)) },
                     onCreateWorkout = { navController.navigate(Routes.editor(-1L)) }
                 )
+            }
+            composable(Routes.RIDE) {
+                RideScreen()
+            }
+            composable(Routes.PROFILE) {
+                ProfileScreen()
             }
             composable(
                 route = Routes.WORKOUT_DETAIL,

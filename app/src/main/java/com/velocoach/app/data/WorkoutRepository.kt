@@ -2,7 +2,9 @@ package com.velocoach.app.data
 
 class WorkoutRepository(
     private val workoutDao: WorkoutDao,
-    private val planDao: PlanDao
+    private val planDao: PlanDao,
+    private val athleteProfileDao: AthleteProfileDao,
+    private val rideDao: RideDao
 ) {
 
     fun observeWorkouts() = workoutDao.observeAll()
@@ -35,4 +37,14 @@ class WorkoutRepository(
     }
 
     suspend fun removeFromDay(epochDay: Long) = planDao.deleteForDay(epochDay)
+
+    fun observeProfile() = athleteProfileDao.observe()
+
+    suspend fun saveFtp(ftpWatts: Int) {
+        athleteProfileDao.upsert(AthleteProfileEntity(ftpWatts = ftpWatts))
+    }
+
+    fun observeRides() = rideDao.observeAll()
+
+    suspend fun saveRide(ride: RideEntity): Long = rideDao.insert(ride)
 }

@@ -76,3 +76,20 @@ data class PlanEntryWithWorkout(
     @Relation(entity = WorkoutEntity::class, parentColumn = "workoutId", entityColumn = "id")
     val workout: WorkoutWithBlocks?
 )
+
+@Entity(tableName = "athlete_profile")
+data class AthleteProfileEntity(
+    @PrimaryKey val id: Long = 1,
+    val ftpWatts: Int = 0
+)
+
+@Entity(tableName = "rides")
+data class RideEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val startedAt: Long,
+    val durationSeconds: Long,
+    val distanceMeters: Double,
+    val avgSpeedKmh: Double,
+    val maxSpeedKmh: Double,
+    val pointsJson: String
+)

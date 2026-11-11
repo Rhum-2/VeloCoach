@@ -2,7 +2,7 @@
 
 App Android native (Kotlin + Jetpack Compose) pour créer et planifier des entraînements vélo structurés, dans l'esprit de Runna — orientée séances à l'intensité (% FTP), façon Zwift/TrainerRoad.
 
-## Fonctionnalités (MVP)
+## Fonctionnalités
 
 - **Planning hebdomadaire** : vue semaine (lundi → dimanche), navigation entre les semaines, assignation d'une séance à un jour, retrait, jour de repos.
 - **Bibliothèque de séances** : liste des séances créées avec durée totale, intensité moyenne (% FTP) et nombre de blocs. Suppression.
@@ -10,8 +10,20 @@ App Android native (Kotlin + Jetpack Compose) pour créer et planifier des entra
   - Échauffement, Continu, Intervalles (répétitions + récupération), Retour au calme
   - durée, plage de puissance min/max en % FTP pour chaque bloc
   - profil de puissance dessiné en direct (Canvas), durée et intensité moyennes recalculées en temps réel.
-- **Détail de séance** : profil, statistiques, structure bloc par bloc, modification, suppression.
+- **Détail de séance** : profil, statistiques, structure bloc par bloc avec watts cibles (si FTP renseignée), modification, suppression.
+- **Suivi GPS des sorties** : enregistrement en arrière-plan via un service au premier plan (notification persistante), stats en direct (durée, distance, vitesse instantanée/max), historique des sorties.
+- **Profil FTP** : saisie de la FTP en watts + zones d'entraînement calculées (récupération → sprint/PMA).
+- **Export GPX + partage** : chaque sortie peut être exportée en fichier GPX et partagée (Garmin Connect, Strava, etc.).
 - **100 % local** : persistance Room, aucune connexion requise. Trois séances d'exemple sont créées au premier lancement.
+
+## Garmin Connect
+
+Une synchronisation directe avec un compte Garmin Connect n'est pas possible pour une app personnelle : l'API officielle (Garmin Health API) est réservée aux entreprises avec un contrat business et fonctionne de serveur à serveur.
+
+La méthode standard des apps indépendantes est implémentée :
+1. Dans l'onglet **Sortie**, touche l'icône **partager** sur une sortie → choisis Garmin Connect (ou enregistre le fichier .gpx)
+2. Sur [connect.garmin.com](https://connect.garmin.com) : menu **Activités → Importer** et dépose le fichier .gpx
+3. La sortie apparaît dans ton historique Garmin avec trace, distance et vitesse
 
 ## Stack technique
 
@@ -55,9 +67,8 @@ En ligne de commande : `./gradlew assembleDebug` (le binaire APK est généré d
 
 ## Feuille de route
 
-1. **FTP personnel** : écran de réglage du FTP pour afficher les watts réels en plus des %.
-2. **Suivi GPS** (comme Strava) : enregistrement de sortie en fond, carte, distance/vitesse.
-3. **Capteurs Bluetooth** : home trainers FTMS, capteurs puissance/cadence/cardio.
-4. **Guide d'exécution** : lecteur de séance pas-à-pas avec alertes de transitions.
-5. **Export** : fichiers .fit / .zwo pour importer les séances dans un GPS Garmin ou Zwift.
-6. **Backend** (si besoin plus tard) : comptes et synchronisation via Firebase ou Supabase.
+1. **Guide d'exécution** : lecteur de séance pas-à-pas avec alertes de transitions.
+2. **Capteurs Bluetooth** : home trainers FTMS, capteurs puissance/cadence/cardio.
+3. **Carte en direct** : affichage de la trace sur carte pendant l'enregistrement (osmdroid).
+4. **Export .fit / .zwo** : importer les séances structurées dans un GPS Garmin ou Zwift.
+5. **Backend** (si besoin plus tard) : comptes et synchronisation via Firebase ou Supabase.
