@@ -17,7 +17,7 @@ App Android native (Kotlin + Jetpack Compose) pour créer et planifier des entra
 
 | Élément | Choix |
 |---|---|
-| Langage | Kotlin 2.0 |
+| Langage | Kotlin 1.9 |
 | UI | Jetpack Compose + Material 3 |
 | Architecture | MVVM (ViewModel + StateFlow + Repository) |
 | Persistance | Room (KSP) |
