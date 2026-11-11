@@ -35,14 +35,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             VeloCoachTheme {
-                VeloCoachApp()
+                VeloCoachRoot()
             }
         }
     }
 }
 
 @Composable
-fun VeloCoachApp() {
+fun VeloCoachRoot() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
